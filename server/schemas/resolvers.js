@@ -41,50 +41,15 @@ const resolvers = {
         // Check if a user is logged in, then updating user's saved books by adding the input book.
         saveBook: async (parent, { input }, context) => {
             if (context.user) {
-                const updateBookList = await User.findByIdAndUpdate(
+                return await User.findOneAndUpdate(
                     { _id: context.user._id },
                     { $addToSet: { savedBooks: input } },
-                    { new: true }
+                    { new: true, runValidators: true }
                 );
-                return updateBookList;
             }
             throw new AuthenticationError('You need to be logged in!');
         },
-        // addComment: async (parent, { thoughtId, commentText }, context) => {
-        //     if (context.user) {
-        //         return Thought.findOneAndUpdate(
-        //             { _id: thoughtId },
-        //             {
-        //                 $addToSet: {
-        //                     comments: { commentText, commentAuthor: context.user.username },
-        //                 },
-        //             },
-        //             {
-        //                 new: true,
-        //                 runValidators: true,
-        //             }
-        //         );
-        //     }
-        //     throw new AuthenticationError('You need to be logged in!');
-        // },
-        // removeThought: async (parent, { thoughtId }, context) => {
-        //     if (context.user) {
-        //         const thought = await Thought.findOneAndDelete({
-        //             _id: thoughtId,
-        //             thoughtAuthor: context.user.username,
-        //         });
-
-        //         await User.findOneAndUpdate(
-        //             { _id: context.user._id },
-        //             { $pull: { thoughts: thought._id } }
-        //         );
-
-        //         return thought;
-        //     }
-        //     throw new AuthenticationError('You need to be logged in!');
-        // },
-        // Delte a book from the user's saved books by the book's ID
-        deleteBook: async (parent, { bookId }, context) => {
+        removeBook: async (parent, { bookId }, context) => {
             if (context.user) {
                 return User.findOneAndUpdate(
                     { _id: context.user._id },

@@ -9,13 +9,13 @@ import {
 } from 'react-bootstrap';
 
 import { GET_ME } from '../utils/queries';
-import { DELETE_BOOK } from '../utils/mutations';
+import { REMOVE_BOOK } from '../utils/mutations';
 // import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
 
 const SavedBooks = () => {
-  const { loading, data } = useQuery(GET_ME);
-  const [deleteBook, { error }] = useMutation(DELETE_BOOK);
+  const { loading, data, refetch } = useQuery(GET_ME);
+  const [removeBook, { error }] = useMutation(REMOVE_BOOK);
 
   useEffect(() => {
     if (error) {
@@ -34,7 +34,7 @@ const SavedBooks = () => {
     // }
 
     try {
-      await deleteBook({
+      await removeBook({
         variables: { bookId}
       });
 
@@ -43,6 +43,7 @@ const SavedBooks = () => {
       // }
 
       // upon success, remove book's id from localStorage
+      refetch();
       removeBookId(bookId);
     } catch (err) {
       console.error(err);
